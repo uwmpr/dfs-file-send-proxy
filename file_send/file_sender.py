@@ -1,12 +1,13 @@
 import requests, json, os, random
 
 async def send_file(channel_id, auth, filename):
+    print(filename)
     head = {
         "Content-Type": "application/json",
         "Authorization": auth
     }
     id = random.randint(1,99)
-    filesize = os.path.getsize(filename)
+    filesize = os.path.getsize("file_send/" + filename)
     body = {
         "files":[
             {
@@ -22,7 +23,7 @@ async def send_file(channel_id, auth, filename):
         data = json.loads(response.text)
         url = data["attachments"][0]["upload_url"]
         upload_filename = data["attachments"][0]["upload_filename"]
-        with open(filename, "rb") as file:
+        with open("file_send/" + filename, "rb") as file:
             response2 = requests.put(url, data=file)
         if(response2.status_code == 200):
             head = {
@@ -43,8 +44,13 @@ async def send_file(channel_id, auth, filename):
             if (response3.status_code == 200):
                 os.remove("file_send/" + filename)
                 return 200
+            else:
+                print ("!")
+                return 500
 
         else:
+            print("ok")
             return 500
     else:
+        print("lp")
         return 500
